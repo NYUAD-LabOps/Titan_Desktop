@@ -279,22 +279,27 @@ namespace Titan_USB_CDC_Interface
         private void MoveForwardStart()
         {
 
-            ExecuteMoveCommand("@@@M00F" + textBoxFreq.Text);
+            ExecuteMoveCommand("@@@M"+textBoxDriveIndex.Text+"F" + textBoxFreq.Text);
         }
 
         private void MoveForwardStop()
         {
-            ExecuteMoveCommand("@@@S00");
+            ExecuteMoveCommand("@@@S" + textBoxDriveIndex.Text);
         }
 
         private void MoveReverseStart()
         {
-            ExecuteMoveCommand("@@@M00R"+textBoxFreq.Text);
+            ExecuteMoveCommand("@@@M"+textBoxDriveIndex.Text+"R" + textBoxFreq.Text);
+        }
+
+        private void textBoxFreq_TextChanged(object sender, EventArgs e)
+        {
+
         }
 
         private void MoveReverseStop()
         {
-            ExecuteMoveCommand("@@@S00");
+            ExecuteMoveCommand("@@@S" + textBoxDriveIndex.Text);
         }
         private void ExecuteMoveCommand(string moveCommand)
         {
