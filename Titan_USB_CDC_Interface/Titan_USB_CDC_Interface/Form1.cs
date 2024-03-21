@@ -35,8 +35,9 @@ namespace Titan_USB_CDC_Interface
             mySerialPort.Handshake = Handshake.None;
 
             // Set the read/write timeouts
-            mySerialPort.ReadTimeout = 500;
-            mySerialPort.WriteTimeout = 500;
+            mySerialPort.ReadTimeout = 3500;
+            mySerialPort.WriteTimeout = 3500;
+            mySerialPort.WriteBufferSize = 5000;
 
             // Subscribe to the DataReceived event
             mySerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
@@ -124,7 +125,13 @@ namespace Titan_USB_CDC_Interface
         private void buttonSend_Click(object sender, EventArgs e)
         {
             string theData;
-            theData = textBoxCommand.Text;
+            int i;
+            theData = "@@@";
+            for (i = 0; i < 90; i++)
+            {
+                theData += "a";
+            }
+//            theData = textBoxCommand.Text;
             SendData(theData);
         }
 
