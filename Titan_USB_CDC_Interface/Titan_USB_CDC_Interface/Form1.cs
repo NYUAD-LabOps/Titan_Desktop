@@ -28,7 +28,8 @@ namespace Titan_USB_CDC_Interface
             mySerialPort = new SerialPort(thePort);
 
             // Configure your serial port (Baud rate, Parity, Stop bits, Data bits)
-            mySerialPort.BaudRate = 12000000;
+//            mySerialPort.BaudRate = 12000000;
+            mySerialPort.BaudRate = 9600;
             mySerialPort.Parity = Parity.None;
             mySerialPort.StopBits = StopBits.One;
             mySerialPort.DataBits = 8;
