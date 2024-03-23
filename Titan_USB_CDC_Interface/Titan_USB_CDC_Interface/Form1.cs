@@ -8,6 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.Net.Http;
+using System.Security.Permissions;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Titan_USB_CDC_Interface
 {
@@ -60,11 +64,11 @@ namespace Titan_USB_CDC_Interface
             });
 
         }
-        public void SendData(string theData)
+        public void SendData(byte[] theData)
         {
             if (mySerialPort.IsOpen)
             {
-                mySerialPort.Write(theData);
+                mySerialPort.Write(theData,0,theData.Length);
             }
         }
 
@@ -123,17 +127,120 @@ namespace Titan_USB_CDC_Interface
 
         }
 
+
+        public int CopyULongIntoByteArray(byte[] byte_data, int offset, ulong int_data, int padded_width)
+        {
+            int pos = offset;
+            int pad_count;
+            string numberString = int_data.ToString(); // Convert integer to string
+            pad_count = padded_width - numberString.Length;
+            //            if (pad_count > 0)
+            //            {
+            //                numberString = numberString.PadLeft(pad_count, '0');
+            //            }
+            numberString = numberString.PadLeft(padded_width, '0');
+            byte[] byte_array = Encoding.ASCII.GetBytes(numberString);
+            Array.Copy(byte_array, 0, byte_data, offset, byte_array.Length);
+            pos = offset + byte_array.Length;
+            return pos;
+        }
+
+        /*
+#define MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT     0
+#define MOVE_TYPE_CONTINUOUS_FWD            1
+#define MOVE_TYPE_CONTINUOUS_REV            2
+#define MOVE_TYPE_CLOCK_COUNT_FWD           3
+#define MOVE_TYPE_CLOCK_COUNT_REV           4
+*/
+        public int CopyIntIntoByteArray(byte[] byte_data,int offset,int int_data,int padded_width)
+        {
+            int pos = offset;
+            int pad_count;
+            string numberString = int_data.ToString(); // Convert integer to string
+            pad_count = padded_width - numberString.Length;
+//            if (pad_count > 0)
+//            {
+//                numberString = numberString.PadLeft(pad_count, '0');
+//            }
+            numberString = numberString.PadLeft(padded_width, '0');
+            byte[] byte_array = Encoding.ASCII.GetBytes(numberString);
+            Array.Copy(byte_array, 0, byte_data, offset, byte_array.Length);
+            pos = offset + byte_array.Length;
+            return pos;
+        }
+        public int WriteMsgHeaderIntoByteArray(byte[] byte_data,int offset,int action, int msg_length, int move_count, int cycle_start)
+        {
+            int pos = offset;
+            byte_data[pos++]   = 64;
+            byte_data[pos++] = 64;
+            byte_data[pos++] = 64;
+            pos = CopyIntIntoByteArray(byte_data, pos, action,2);
+            pos = CopyULongIntoByteArray(byte_data, pos, 12254123,20);
+            byte_data[pos++] = GetBitPatternFromInt(action, 2);
+            byte_data[pos++] = GetBitPatternFromInt(action, 1);
+            byte_data[pos++] = 0;
+            byte_data[pos++] = 0;
+            byte_data[pos++] = GetBitPatternFromInt(msg_length, 1);
+            byte_data[pos++] = GetBitPatternFromInt(msg_length, 2);
+            byte_data[pos++] = 0;
+            byte_data[pos++] = 0;
+            byte_data[pos++] = GetBitPatternFromInt(move_count, 1);
+            byte_data[pos++] = GetBitPatternFromInt(move_count, 2);
+            byte_data[pos++] = 0;
+            byte_data[pos++] = 0;
+            byte_data[pos++] = GetBitPatternFromInt(cycle_start, 1);
+            byte_data[pos++] = GetBitPatternFromInt(cycle_start, 2);
+            byte_data[pos++] = 0;
+            byte_data[pos++] = 0;
+            return pos;
+        }
+
+        public int WriteMsgMoveIntoByteArray(byte[] byte_data, int offset, int action, int msg_length, int move_count, int cycle_start)
+        {
+            int pos = offset;
+            byte_data[pos++] = 64;
+            byte_data[pos++] = 64;
+            byte_data[pos++] = 64;
+            byte_data[pos++] = GetBitPatternFromInt(action, 1);
+            byte_data[pos++] = GetBitPatternFromInt(msg_length, 1);
+            byte_data[pos++] = GetBitPatternFromInt(move_count, 1);
+            byte_data[pos++] = GetBitPatternFromInt(cycle_start, 1);
+            return pos;
+        }
+
+        public byte GetBitPatternFromInt(int m_int, int the_byte)
+        {
+            byte the_bits = 0;
+            int bit_shift = (the_byte - 1) * 8;
+            the_bits = ((byte)((m_int >> bit_shift) & 0xFF));
+            return the_bits;
+        }
+        public byte GetBitPatternFromULong(ulong u_long, int the_byte)
+        {
+            byte the_bits = 0;
+            int bit_shift = (the_byte - 1) * 8;
+            the_bits = ((byte)((u_long >> bit_shift) & 0xFF));
+            return the_bits;
+        }
+
         private void buttonSend_Click(object sender, EventArgs e)
         {
             string theData;
             int i;
-            theData = "@@@";
+            byte[] bytes = new byte[1000];
+            int offset = 0;
+            offset = WriteMsgHeaderIntoByteArray(bytes, offset, 1, 2, 3, 4);
+            offset = WriteMsgMoveIntoByteArray(bytes, offset, 11, 12, 13, 14);
+
+            /*
             for (i = 0; i < 90; i++)
             {
                 theData += "a";
             }
-//            theData = textBoxCommand.Text;
-            SendData(theData);
+*/
+            //            theData = textBoxCommand.Text;
+            //            SendData(theData);
+            SendData(bytes);
         }
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
@@ -582,7 +689,7 @@ namespace Titan_USB_CDC_Interface
         {
             string theData;
             theData = textBoxCommand.Text;
-            SendData(moveCommand);
+//            SendData(moveCommand);
             listBoxReceived.Items.Add("\r\n"+moveCommand);
             if (listBoxReceived.Items.Count > 12)
             {
