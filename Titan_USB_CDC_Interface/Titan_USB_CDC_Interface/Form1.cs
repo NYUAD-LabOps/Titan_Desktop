@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Security.Permissions;
 using System.IO;
 using System.Runtime.CompilerServices;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Titan_USB_CDC_Interface
 {
@@ -142,10 +143,12 @@ namespace Titan_USB_CDC_Interface
             byte[] byte_array = Encoding.ASCII.GetBytes(numberString);
             Array.Copy(byte_array, 0, byte_data, offset, byte_array.Length);
             pos = offset + byte_array.Length;
+            byte_data[pos] = 0;
+            pos++;
             return pos;
         }
 
-        /*
+/*
 #define MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT     0
 #define MOVE_TYPE_CONTINUOUS_FWD            1
 #define MOVE_TYPE_CONTINUOUS_REV            2
@@ -166,70 +169,87 @@ namespace Titan_USB_CDC_Interface
             byte[] byte_array = Encoding.ASCII.GetBytes(numberString);
             Array.Copy(byte_array, 0, byte_data, offset, byte_array.Length);
             pos = offset + byte_array.Length;
+            byte_data[pos] = 0;
+            pos++;
             return pos;
         }
-        public int WriteMsgHeaderIntoByteArray(byte[] byte_data,int offset,int action, int msg_length, int move_count, int cycle_start)
+        public int WriteMsgHeaderIntoByteArray(byte[] byte_data,int offset, int msg_length, int move_count, int cycle_start)
         {
             int pos = offset;
             byte_data[pos++]   = 64;
             byte_data[pos++] = 64;
             byte_data[pos++] = 64;
-            pos = CopyIntIntoByteArray(byte_data, pos, action,2);
-            pos = CopyULongIntoByteArray(byte_data, pos, 12254123,20);
-            byte_data[pos++] = GetBitPatternFromInt(action, 2);
-            byte_data[pos++] = GetBitPatternFromInt(action, 1);
-            byte_data[pos++] = 0;
-            byte_data[pos++] = 0;
-            byte_data[pos++] = GetBitPatternFromInt(msg_length, 1);
-            byte_data[pos++] = GetBitPatternFromInt(msg_length, 2);
-            byte_data[pos++] = 0;
-            byte_data[pos++] = 0;
-            byte_data[pos++] = GetBitPatternFromInt(move_count, 1);
-            byte_data[pos++] = GetBitPatternFromInt(move_count, 2);
-            byte_data[pos++] = 0;
-            byte_data[pos++] = 0;
-            byte_data[pos++] = GetBitPatternFromInt(cycle_start, 1);
-            byte_data[pos++] = GetBitPatternFromInt(cycle_start, 2);
-            byte_data[pos++] = 0;
-            byte_data[pos++] = 0;
+            pos = CopyIntIntoByteArray(byte_data, pos, msg_length,1);
+            pos = CopyIntIntoByteArray(byte_data, pos, move_count, 1);
+            pos = CopyIntIntoByteArray(byte_data, pos, cycle_start, 1);
             return pos;
         }
 
-        public int WriteMsgMoveIntoByteArray(byte[] byte_data, int offset, int action, int msg_length, int move_count, int cycle_start)
+        public int WriteMsgMoveIntoByteArray(byte[] byte_data, int offset, int drive, int type, int frequency, ulong clock_cycle_target)
         {
             int pos = offset;
-            byte_data[pos++] = 64;
-            byte_data[pos++] = 64;
-            byte_data[pos++] = 64;
-            byte_data[pos++] = GetBitPatternFromInt(action, 1);
-            byte_data[pos++] = GetBitPatternFromInt(msg_length, 1);
-            byte_data[pos++] = GetBitPatternFromInt(move_count, 1);
-            byte_data[pos++] = GetBitPatternFromInt(cycle_start, 1);
+            pos = CopyIntIntoByteArray(byte_data, pos, drive, 1);
+            pos = CopyIntIntoByteArray(byte_data, pos, type, 1);
+            pos = CopyIntIntoByteArray(byte_data, pos, frequency, 5);
+            pos = CopyULongIntoByteArray(byte_data, pos, clock_cycle_target, 20);
             return pos;
         }
 
-        public byte GetBitPatternFromInt(int m_int, int the_byte)
+        private void ZeroByteArray(byte[] byte_array)
         {
-            byte the_bits = 0;
-            int bit_shift = (the_byte - 1) * 8;
-            the_bits = ((byte)((m_int >> bit_shift) & 0xFF));
-            return the_bits;
+            int i;
+            for(i=0; i<byte_array.Length;i++)
+            {
+                byte_array[i] = 0;
+            }
         }
-        public byte GetBitPatternFromULong(ulong u_long, int the_byte)
+
+        private int CopyCombBoxIntoBuffer(byte[] byte_array, int the_offset, ComboBox theComboBox)
         {
-            byte the_bits = 0;
-            int bit_shift = (the_byte - 1) * 8;
-            the_bits = ((byte)((u_long >> bit_shift) & 0xFF));
-            return the_bits;
+            int pos = the_offset;
+            string the_text = theComboBox.Text;
+            byte[] txt_byte_array = System.Text.Encoding.UTF8.GetBytes(the_text);
+            Array.Copy(txt_byte_array, 0, byte_array, pos, 1);
+            pos++;
+            return pos;
+        }
+
+        private int CopyTextBoxIntoBuffer(byte[] byte_array, int the_offset, TextBox theTxtBox)
+        {
+            int pos = the_offset;
+            string the_text = theTxtBox.Text;
+            byte[] txt_byte_array = System.Text.Encoding.UTF8.GetBytes(the_text);
+            Array.Copy(txt_byte_array, 0, byte_array, pos, txt_byte_array.Length);
+            pos += txt_byte_array.Length;
+            return pos;
+        }
+        private int CopyTextBoxIntoBufferAsOneByteInt(byte[] byte_array, int the_offset, TextBox theTxtBox)
+        {
+            int pos = the_offset;
+            string the_text = theTxtBox.Text;
+            int the_number = int.Parse(the_text);
+            char a_char = (char)the_number;
+            byte_array[pos++] = ((byte)a_char);
+            byte_array[pos++] = 0;
+            return pos;
+        }
+        private int CopyHeaderIntoBuffer(byte[] byte_array, int the_offset,TextBox theAckBox)
+        {
+            int pos = the_offset;
+            pos = CopyTextBoxIntoBuffer(byte_array, pos, theAckBox);
+            pos = CopyTextBoxIntoBufferAsOneByteInt(byte_array, pos, textBoxMsgLength);
+            pos = CopyTextBoxIntoBufferAsOneByteInt(byte_array, pos, textBoxMoveCount);
+            pos = CopyTextBoxIntoBufferAsOneByteInt(byte_array, pos, textBoxCycleStart);
+            return pos;
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            string theData;
-            int i;
             byte[] bytes = new byte[1000];
             int offset = 0;
-            offset = WriteMsgHeaderIntoByteArray(bytes, offset, 1, 2, 3, 4);
+            ZeroByteArray(bytes);
+            offset = CopyHeaderIntoBuffer(bytes, offset, textBoxAck);
+            offset = WriteMsgHeaderIntoByteArray(bytes, offset, 1, 2, 3);
             offset = WriteMsgMoveIntoByteArray(bytes, offset, 11, 12, 13, 14);
 
             /*
@@ -676,6 +696,17 @@ namespace Titan_USB_CDC_Interface
         private void btnCHome_Click(object sender, EventArgs e)
         {
             ExecuteMoveCommand("@@@H04");
+
+        }
+
+        private void btnRefreshPortList_Click(object sender, EventArgs e)
+        {
+            string[] ports = GetPortList();
+            comboBoxSerialPort.Items.Clear();
+            foreach (string port in ports)
+            {
+                comboBoxSerialPort.Items.Add(port);
+            }
 
         }
 
