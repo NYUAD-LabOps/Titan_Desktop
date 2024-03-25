@@ -13,6 +13,9 @@ using System.Security.Permissions;
 using System.IO;
 using System.Runtime.CompilerServices;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using TextBox = System.Windows.Forms.TextBox;
+using ComboBox = System.Windows.Forms.ComboBox;
 
 namespace Titan_USB_CDC_Interface
 {
@@ -20,6 +23,10 @@ namespace Titan_USB_CDC_Interface
     {
         string[] ports;
         private SerialPort mySerialPort;
+        TextBox[] text_box_drive = new TextBox[10];
+        TextBox[] text_box_freq = new TextBox[10];
+        TextBox[] text_box_steps = new TextBox[10];
+        ComboBox[] cb_move_type = new ComboBox[10];
 
 
         public string[] GetPortList()
@@ -86,6 +93,7 @@ namespace Titan_USB_CDC_Interface
         public Form1()
         {
             InitializeComponent();
+            int i,k;
             listBoxReceived.Text = "startup";
             // Set KeyPreview property to true to catch the key events at form level
             this.KeyPreview = true;
@@ -100,8 +108,86 @@ namespace Titan_USB_CDC_Interface
             commandHasFocus = false;
             freqHasFocus = false;
             bmpHasFocus = false;
+            text_box_drive[0] = textBoxCBDrive00;
+            text_box_drive[1] = textBoxCBDrive01;
+            text_box_drive[2] = textBoxCBDrive02;
+            text_box_drive[3] = textBoxCBDrive03;
+            text_box_drive[4] = textBoxCBDrive04;
+            text_box_drive[5] = textBoxCBDrive05;
+            text_box_drive[6] = textBoxCBDrive06;
+            text_box_drive[7] = textBoxCBDrive07;
+            text_box_drive[8] = textBoxCBDrive08;
+            text_box_drive[9] = textBoxCBDrive09;
+            text_box_freq[0] = textBoxCBFreq00;
+            text_box_freq[1] = textBoxCBFreq01;
+            text_box_freq[2] = textBoxCBFreq02;
+            text_box_freq[3] = textBoxCBFreq03;
+            text_box_freq[4] = textBoxCBFreq04;
+            text_box_freq[5] = textBoxCBFreq05;
+            text_box_freq[6] = textBoxCBFreq06;
+            text_box_freq[7] = textBoxCBFreq07;
+            text_box_freq[8] = textBoxCBFreq08;
+            text_box_freq[9] = textBoxCBFreq09;
+            text_box_steps[0] = textBoxCBClockCycleTarget00;
+            text_box_steps[1] = textBoxCBClockCycleTarget01;
+            text_box_steps[2] = textBoxCBClockCycleTarget02;
+            text_box_steps[3] = textBoxCBClockCycleTarget03;
+            text_box_steps[4] = textBoxCBClockCycleTarget04;
+            text_box_steps[5] = textBoxCBClockCycleTarget05;
+            text_box_steps[6] = textBoxCBClockCycleTarget06;
+            text_box_steps[7] = textBoxCBClockCycleTarget07;
+            text_box_steps[8] = textBoxCBClockCycleTarget08;
+            text_box_steps[9] = textBoxCBClockCycleTarget09;
+            cb_move_type[0] = comboBoxCBMoveType00;
+            cb_move_type[1] = comboBoxCBMoveType01;
+            cb_move_type[2] = comboBoxCBMoveType02;
+            cb_move_type[3] = comboBoxCBMoveType03;
+            cb_move_type[4] = comboBoxCBMoveType04;
+            cb_move_type[5] = comboBoxCBMoveType05;
+            cb_move_type[6] = comboBoxCBMoveType06;
+            cb_move_type[7] = comboBoxCBMoveType07;
+            cb_move_type[8] = comboBoxCBMoveType08;
+            cb_move_type[9] = comboBoxCBMoveType09;
+            ComboBoxItem[] combo_box_item = new ComboBoxItem[6];
+            for(i=0; i < 6; i++)
+            {
+                combo_box_item[i] = new ComboBoxItem();
+            }
+            combo_box_item[0].Text = "MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT";
+            combo_box_item[0].Value = "0";
+            combo_box_item[1].Text = "MOVE_TYPE_HOME";
+            combo_box_item[1].Value = "1";
+            combo_box_item[2].Text = "MOVE_TYPE_CONTINUOUS_FWD";
+            combo_box_item[2].Value = "2";
+            combo_box_item[3].Text = "MOVE_TYPE_CONTINUOUS_REV";
+            combo_box_item[3].Value = "3";
+            combo_box_item[4].Text = "MOVE_TYPE_CLOCK_COUNT_FWD";
+            combo_box_item[4].Value = "4";
+            combo_box_item[5].Text = "MOVE_TYPE_CLOCK_COUNT_REV";
+            combo_box_item[5].Value = "5";
 
+            for (i=0;i<10;i++)
+            {
+                cb_move_type[i].Items.Clear();
+                for (k = 0; k < 6; k++)
+                {
+                    cb_move_type[i].Items.Add(combo_box_item[k]);
+                }
+//                cb_move_type[i].Items.Add("0 - MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT");
+//                cb_move_type[i].Items.Add("1 - MOVE_TYPE_HOME");
+//                cb_move_type[i].Items.Add("2 - MOVE_TYPE_CONTINUOUS_FWD");
+//                cb_move_type[i].Items.Add("3 - MOVE_TYPE_CONTINUOUS_REV");
+//                cb_move_type[i].Items.Add("4 - MOVE_TYPE_CLOCK_COUNT_FWD");
+//                cb_move_type[i].Items.Add("5 - MOVE_TYPE_CLOCK_COUNT_REV");
+            }
+        }
 
+        public class ComboBoxItem
+        {
+            public string Text { get; set; }
+            public string Value { get; set; }
+
+            public override string ToString() => Text; // Ensures the display text is shown in the ComboBox
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -161,10 +247,6 @@ namespace Titan_USB_CDC_Interface
             int pad_count;
             string numberString = int_data.ToString(); // Convert integer to string
             pad_count = padded_width - numberString.Length;
-//            if (pad_count > 0)
-//            {
-//                numberString = numberString.PadLeft(pad_count, '0');
-//            }
             numberString = numberString.PadLeft(padded_width, '0');
             byte[] byte_array = Encoding.ASCII.GetBytes(numberString);
             Array.Copy(byte_array, 0, byte_data, offset, byte_array.Length);
@@ -173,25 +255,24 @@ namespace Titan_USB_CDC_Interface
             pos++;
             return pos;
         }
-        public int WriteMsgHeaderIntoByteArray(byte[] byte_data,int offset, int msg_length, int move_count, int cycle_start)
+        public int WriteMsgHeaderIntoByteArray(byte[] byte_data,int offset, int move_count, int cycle_start)
         {
             int pos = offset;
             byte_data[pos++]   = 64;
             byte_data[pos++] = 64;
             byte_data[pos++] = 64;
-            pos = CopyIntIntoByteArray(byte_data, pos, msg_length,1);
             pos = CopyIntIntoByteArray(byte_data, pos, move_count, 1);
             pos = CopyIntIntoByteArray(byte_data, pos, cycle_start, 1);
             return pos;
         }
 
-        public int WriteMsgMoveIntoByteArray(byte[] byte_data, int offset, int drive, int type, int frequency, ulong clock_cycle_target)
+        public int WriteMsgMoveIntoByteArray(byte[] byte_data, int offset, int drive, int type, int frequency, int clock_cycle_target)
         {
             int pos = offset;
             pos = CopyIntIntoByteArray(byte_data, pos, drive, 1);
             pos = CopyIntIntoByteArray(byte_data, pos, type, 1);
-            pos = CopyIntIntoByteArray(byte_data, pos, frequency, 5);
-            pos = CopyULongIntoByteArray(byte_data, pos, clock_cycle_target, 20);
+            pos = CopyIntIntoByteArray(byte_data, pos, frequency, 6);
+            pos = CopyIntIntoByteArray(byte_data, pos, clock_cycle_target, 6);
             return pos;
         }
 
@@ -204,15 +285,6 @@ namespace Titan_USB_CDC_Interface
             }
         }
 
-        private int CopyCombBoxIntoBuffer(byte[] byte_array, int the_offset, ComboBox theComboBox)
-        {
-            int pos = the_offset;
-            string the_text = theComboBox.Text;
-            byte[] txt_byte_array = System.Text.Encoding.UTF8.GetBytes(the_text);
-            Array.Copy(txt_byte_array, 0, byte_array, pos, 1);
-            pos++;
-            return pos;
-        }
 
         private int CopyTextBoxIntoBuffer(byte[] byte_array, int the_offset, TextBox theTxtBox)
         {
@@ -233,25 +305,27 @@ namespace Titan_USB_CDC_Interface
             byte_array[pos++] = 0;
             return pos;
         }
-        private int CopyHeaderIntoBuffer(byte[] byte_array, int the_offset,TextBox theAckBox)
-        {
-            int pos = the_offset;
-            pos = CopyTextBoxIntoBuffer(byte_array, pos, theAckBox);
-            pos = CopyTextBoxIntoBufferAsOneByteInt(byte_array, pos, textBoxMsgLength);
-            pos = CopyTextBoxIntoBufferAsOneByteInt(byte_array, pos, textBoxMoveCount);
-            pos = CopyTextBoxIntoBufferAsOneByteInt(byte_array, pos, textBoxCycleStart);
-            return pos;
-        }
+
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
             byte[] bytes = new byte[1000];
             int offset = 0;
+            int i = 0;
+            int drive, move_type, freq, cycle_count,move_count,cycle_start;
             ZeroByteArray(bytes);
-            offset = CopyHeaderIntoBuffer(bytes, offset, textBoxAck);
-            offset = WriteMsgHeaderIntoByteArray(bytes, offset, 1, 2, 3);
-            offset = WriteMsgMoveIntoByteArray(bytes, offset, 11, 12, 13, 14);
-
+            move_count = int.Parse(textBoxMoveCount.Text);
+            cycle_start = int.Parse(textBoxCycleStart.Text);
+            offset = WriteMsgHeaderIntoByteArray(bytes, offset, move_count, cycle_start);
+            for(i=0;i<move_count;i++)
+            {
+                drive = int.Parse(text_box_drive[i].Text);
+                freq = int.Parse(text_box_freq[i].Text);
+                cycle_count = int.Parse(text_box_steps[i].Text);
+                move_type = int.Parse(((ComboBoxItem)(cb_move_type[i].SelectedItem)).Value);
+                offset = WriteMsgMoveIntoByteArray(bytes, offset, drive, move_type, freq, cycle_count);
+            }
+            
             /*
             for (i = 0; i < 90; i++)
             {
