@@ -148,28 +148,34 @@ namespace Titan_USB_CDC_Interface
             cb_move_type[7] = comboBoxCBMoveType07;
             cb_move_type[8] = comboBoxCBMoveType08;
             cb_move_type[9] = comboBoxCBMoveType09;
-            ComboBoxItem[] combo_box_item = new ComboBoxItem[6];
-            for(i=0; i < 6; i++)
+            const int MAX_MOVE_TYPES = 8;
+
+            ComboBoxItem[] combo_box_item = new ComboBoxItem[MAX_MOVE_TYPES];
+            for(i=0; i < MAX_MOVE_TYPES; i++)
             {
                 combo_box_item[i] = new ComboBoxItem();
             }
             combo_box_item[0].Text = "MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT";
             combo_box_item[0].Value = "0";
-            combo_box_item[1].Text = "MOVE_TYPE_HOME";
+            combo_box_item[1].Text = "MOVE_TYPE_CLOCK_COUNT_STOP";
             combo_box_item[1].Value = "1";
-            combo_box_item[2].Text = "MOVE_TYPE_CONTINUOUS_FWD";
+            combo_box_item[2].Text = "MOVE_TYPE_HOME";
             combo_box_item[2].Value = "2";
-            combo_box_item[3].Text = "MOVE_TYPE_CONTINUOUS_REV";
+            combo_box_item[3].Text = "MOVE_TYPE_HOME_HOMING_BACK_OFF";
             combo_box_item[3].Value = "3";
-            combo_box_item[4].Text = "MOVE_TYPE_CLOCK_COUNT_FWD";
+            combo_box_item[4].Text = "MOVE_TYPE_CONTINUOUS_FWD";
             combo_box_item[4].Value = "4";
-            combo_box_item[5].Text = "MOVE_TYPE_CLOCK_COUNT_REV";
+            combo_box_item[5].Text = "MOVE_TYPE_CONTINUOUS_REV";
             combo_box_item[5].Value = "5";
+            combo_box_item[6].Text = "MOVE_TYPE_CLOCK_COUNT_FWD";
+            combo_box_item[6].Value = "6";
+            combo_box_item[7].Text = "MOVE_TYPE_CLOCK_COUNT_REV";
+            combo_box_item[7].Value = "7";
 
             for (i=0;i<10;i++)
             {
                 cb_move_type[i].Items.Clear();
-                for (k = 0; k < 6; k++)
+                for (k = 0; k < combo_box_item.Count(); k++)
                 {
                     cb_move_type[i].Items.Add(combo_box_item[k]);
                 }
@@ -261,7 +267,7 @@ namespace Titan_USB_CDC_Interface
             byte_data[pos++]   = 64;
             byte_data[pos++] = 64;
             byte_data[pos++] = 64;
-            pos = CopyIntIntoByteArray(byte_data, pos, move_count, 1);
+            pos = CopyIntIntoByteArray(byte_data, pos, move_count, 2);
             pos = CopyIntIntoByteArray(byte_data, pos, cycle_start, 1);
             return pos;
         }
@@ -309,7 +315,7 @@ namespace Titan_USB_CDC_Interface
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            byte[] bytes = new byte[1000];
+            byte[] bytes = new byte[500];
             int offset = 0;
             int i = 0;
             int drive, move_type, freq, cycle_count,move_count,cycle_start;
