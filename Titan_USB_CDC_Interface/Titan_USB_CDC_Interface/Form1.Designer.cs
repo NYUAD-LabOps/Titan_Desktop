@@ -42,10 +42,6 @@ namespace Titan_USB_CDC_Interface
             this.label9 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonSend = new System.Windows.Forms.Button();
-            this.labelCommand = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.textBoxCommand = new System.Windows.Forms.TextBox();
-            this.listBoxReceived = new System.Windows.Forms.ListBox();
             this.txtBoxDI_00 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnYFwd = new System.Windows.Forms.Button();
@@ -137,6 +133,8 @@ namespace Titan_USB_CDC_Interface
             this.textBoxMoveCount = new System.Windows.Forms.TextBox();
             this.textBoxAck = new System.Windows.Forms.TextBox();
             this.labelCommandHeader = new System.Windows.Forms.Label();
+            this.listBoxReceived = new System.Windows.Forms.ListBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBoxManualDrive.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -219,7 +217,6 @@ namespace Titan_USB_CDC_Interface
             this.btnXRev.TabStop = false;
             this.btnXRev.Text = "X-";
             this.btnXRev.UseVisualStyleBackColor = true;
-            this.btnXRev.Click += new System.EventHandler(this.BtnD1Rev_Click);
             this.btnXRev.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnXRev_MouseDown);
             this.btnXRev.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnXRev_MouseUp);
             // 
@@ -289,48 +286,6 @@ namespace Titan_USB_CDC_Interface
             this.buttonSend.Text = "Send Command(s)";
             this.buttonSend.UseVisualStyleBackColor = true;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
-            // 
-            // labelCommand
-            // 
-            this.labelCommand.AutoSize = true;
-            this.labelCommand.Location = new System.Drawing.Point(1288, 501);
-            this.labelCommand.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelCommand.Name = "labelCommand";
-            this.labelCommand.Size = new System.Drawing.Size(188, 25);
-            this.labelCommand.TabIndex = 2;
-            this.labelCommand.Text = "Command Builder:";
-            this.labelCommand.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(1481, 724);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(161, 25);
-            this.label5.TabIndex = 19;
-            this.label5.Text = "Titan Feedback";
-            // 
-            // textBoxCommand
-            // 
-            this.textBoxCommand.Location = new System.Drawing.Point(1278, 435);
-            this.textBoxCommand.Margin = new System.Windows.Forms.Padding(4);
-            this.textBoxCommand.Name = "textBoxCommand";
-            this.textBoxCommand.Size = new System.Drawing.Size(137, 31);
-            this.textBoxCommand.TabIndex = 1;
-            this.textBoxCommand.TabStop = false;
-            this.textBoxCommand.Enter += new System.EventHandler(this.CommandGainedFocus);
-            this.textBoxCommand.Leave += new System.EventHandler(this.CommandLostFocus);
-            // 
-            // listBoxReceived
-            // 
-            this.listBoxReceived.FormattingEnabled = true;
-            this.listBoxReceived.ItemHeight = 25;
-            this.listBoxReceived.Location = new System.Drawing.Point(1481, 756);
-            this.listBoxReceived.Margin = new System.Windows.Forms.Padding(4);
-            this.listBoxReceived.Name = "listBoxReceived";
-            this.listBoxReceived.Size = new System.Drawing.Size(252, 404);
-            this.listBoxReceived.TabIndex = 20;
             // 
             // txtBoxDI_00
             // 
@@ -1363,6 +1318,26 @@ namespace Titan_USB_CDC_Interface
             this.labelCommandHeader.TabIndex = 57;
             this.labelCommandHeader.Text = "Header:";
             // 
+            // listBoxReceived
+            // 
+            this.listBoxReceived.FormattingEnabled = true;
+            this.listBoxReceived.ItemHeight = 25;
+            this.listBoxReceived.Location = new System.Drawing.Point(1481, 756);
+            this.listBoxReceived.Margin = new System.Windows.Forms.Padding(4);
+            this.listBoxReceived.Name = "listBoxReceived";
+            this.listBoxReceived.Size = new System.Drawing.Size(252, 404);
+            this.listBoxReceived.TabIndex = 20;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(1481, 724);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(161, 25);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "Titan Feedback";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -1373,9 +1348,7 @@ namespace Titan_USB_CDC_Interface
             this.Controls.Add(this.groupBoxManualDrive);
             this.Controls.Add(this.listBoxReceived);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBoxCommand);
             this.Controls.Add(this.buttonConnect);
-            this.Controls.Add(this.labelCommand);
             this.Controls.Add(this.comboBoxSerialPort);
             this.Controls.Add(this.buttonDisconnect);
             this.Controls.Add(this.label1);
@@ -1410,10 +1383,6 @@ namespace Titan_USB_CDC_Interface
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonSend;
-        private System.Windows.Forms.Label labelCommand;
-        private System.Windows.Forms.Label label5;
-        public System.Windows.Forms.TextBox textBoxCommand;
-        private System.Windows.Forms.ListBox listBoxReceived;
         private System.Windows.Forms.TextBox txtBoxDI_00;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnYFwd;
@@ -1505,6 +1474,8 @@ namespace Titan_USB_CDC_Interface
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.ListBox listBoxReceived;
+        private System.Windows.Forms.Label label5;
     }
 }
 

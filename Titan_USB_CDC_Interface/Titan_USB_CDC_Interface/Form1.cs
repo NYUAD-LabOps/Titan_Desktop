@@ -89,6 +89,14 @@ namespace Titan_USB_CDC_Interface
 
         }
 
+        const int MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT = 0;
+        const int MOVE_TYPE_CLOCK_COUNT_STOP = 1;
+        const int MOVE_TYPE_HOME = 2;
+        const int MOVE_TYPE_HOME_HOMING_BACK_OFF = 3;
+        const int MOVE_TYPE_CONTINUOUS_FWD = 4;
+        const int MOVE_TYPE_CONTINUOUS_REV = 5;
+        const int MOVE_TYPE_CLOCK_COUNT_FWD = 6;
+        const int MOVE_TYPE_CLOCK_COUNT_REV = 7;
 
         public Form1()
         {
@@ -156,21 +164,21 @@ namespace Titan_USB_CDC_Interface
                 combo_box_item[i] = new ComboBoxItem();
             }
             combo_box_item[0].Text = "MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT";
-            combo_box_item[0].Value = "0";
+            combo_box_item[0].Value = MOVE_TYPE_CLOCK_COUNT_NO_OUTPUT.ToString();
             combo_box_item[1].Text = "MOVE_TYPE_CLOCK_COUNT_STOP";
-            combo_box_item[1].Value = "1";
+            combo_box_item[1].Value = MOVE_TYPE_CLOCK_COUNT_STOP.ToString();
             combo_box_item[2].Text = "MOVE_TYPE_HOME";
-            combo_box_item[2].Value = "2";
+            combo_box_item[2].Value = MOVE_TYPE_HOME.ToString();
             combo_box_item[3].Text = "MOVE_TYPE_HOME_HOMING_BACK_OFF";
-            combo_box_item[3].Value = "3";
+            combo_box_item[3].Value = MOVE_TYPE_HOME_HOMING_BACK_OFF.ToString();
             combo_box_item[4].Text = "MOVE_TYPE_CONTINUOUS_FWD";
-            combo_box_item[4].Value = "4";
+            combo_box_item[4].Value = MOVE_TYPE_CONTINUOUS_FWD.ToString();
             combo_box_item[5].Text = "MOVE_TYPE_CONTINUOUS_REV";
-            combo_box_item[5].Value = "5";
+            combo_box_item[5].Value = MOVE_TYPE_CONTINUOUS_REV.ToString();
             combo_box_item[6].Text = "MOVE_TYPE_CLOCK_COUNT_FWD";
-            combo_box_item[6].Value = "6";
+            combo_box_item[6].Value = MOVE_TYPE_CLOCK_COUNT_FWD.ToString();
             combo_box_item[7].Text = "MOVE_TYPE_CLOCK_COUNT_REV";
-            combo_box_item[7].Value = "7";
+            combo_box_item[7].Value = MOVE_TYPE_CLOCK_COUNT_REV.ToString();
 
             for (i=0;i<10;i++)
             {
@@ -614,169 +622,335 @@ namespace Titan_USB_CDC_Interface
             ExecuteMoveCommand("@@@S" + txtBoxDI_04.Text);
         }
 
+
+        private void btn_Mouse_Down(byte[] bytes,int move_type,int drive,int frequency)
+        {
+            int offset = 0;
+            int cycle_count, move_count, cycle_start;
+            ZeroByteArray(bytes);
+            move_count = 1;
+            cycle_start = 1;
+            offset = WriteMsgHeaderIntoByteArray(bytes, offset, move_count, cycle_start);
+            cycle_count = 0;
+            WriteMsgMoveIntoByteArray(bytes, offset, drive, move_type, frequency, cycle_count);
+        }
         private void btnXFwd_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_00.Text + "F" + textBoxFreqDI_00.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_00.Text);
+            freq = int.Parse(textBoxFreqDI_00.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_FWD,drive, freq);
+            SendData(bytes);
+
+//            ExecuteMoveCommand("@@@M" + txtBoxDI_00.Text + "F" + textBoxFreqDI_00.Text);
         }
 
         private void btnYFwd_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_01.Text + "F" + textBoxFreqDI_01.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_01.Text);
+            freq = int.Parse(textBoxFreqDI_01.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_FWD, drive, freq);
+            SendData(bytes);
         }
 
         private void btnAFwd_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_03.Text + "F" + textBoxFreqDI_03.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_03.Text);
+            freq = int.Parse(textBoxFreqDI_03.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_FWD, drive, freq);
+            SendData(bytes);
         }
 
         private void btnCFwd_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_04.Text + "F" + textBoxFreqDI_04.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_04.Text);
+            freq = int.Parse(textBoxFreqDI_04.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_FWD, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnWFFwd_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_05.Text + "F" + textBoxFreqDI_05.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_05.Text);
+            freq = int.Parse(textBoxFreqDI_05.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_FWD, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnXFwd_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_00.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_00.Text);
+            freq = int.Parse(textBoxFreqDI_00.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnYFwd_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_01.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_01.Text);
+            freq = int.Parse(textBoxFreqDI_01.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnZFwd_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_02.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_02.Text);
+            freq = int.Parse(textBoxFreqDI_02.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnAFwd_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_03.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_03.Text);
+            freq = int.Parse(textBoxFreqDI_03.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnCFwd_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_04.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_04.Text);
+            freq = int.Parse(textBoxFreqDI_04.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnWFFwd_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_05.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_05.Text);
+            freq = int.Parse(textBoxFreqDI_05.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnXRev_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_00.Text + "R" + textBoxFreqDI_00.Text);
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_00.Text);
+            freq = int.Parse(textBoxFreqDI_00.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_REV, drive, freq);
+            SendData(bytes);
         }
 
         private void btnYRev_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_01.Text + "R" + textBoxFreqDI_01.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_01.Text);
+            freq = int.Parse(textBoxFreqDI_01.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_REV, drive, freq);
+            SendData(bytes);
         }
 
         private void btnZRev_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_02.Text + "R" + textBoxFreqDI_02.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_02.Text);
+            freq = int.Parse(textBoxFreqDI_02.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_REV, drive, freq);
+            SendData(bytes);
         }
 
         private void btnARev_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_03.Text + "R" + textBoxFreqDI_03.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_03.Text);
+            freq = int.Parse(textBoxFreqDI_03.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_REV, drive, freq);
+            SendData(bytes);
         }
 
         private void btnCRev_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_04.Text + "R" + textBoxFreqDI_04.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_04.Text);
+            freq = int.Parse(textBoxFreqDI_04.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_REV, drive, freq);
+            SendData(bytes);
         }
 
         private void btnWFRev_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_05.Text + "R" + textBoxFreqDI_05.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_05.Text);
+            freq = int.Parse(textBoxFreqDI_05.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_REV, drive, freq);
+            SendData(bytes);
         }
 
         private void btnXRev_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_00.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_00.Text);
+            freq = int.Parse(textBoxFreqDI_00.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnYRev_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_01.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_01.Text);
+            freq = int.Parse(textBoxFreqDI_01.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnZRev_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_02.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_02.Text);
+            freq = int.Parse(textBoxFreqDI_02.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnARev_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_03.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_03.Text);
+            freq = int.Parse(textBoxFreqDI_03.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnCRev_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_04.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_04.Text);
+            freq = int.Parse(textBoxFreqDI_04.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnWFRev_MouseUp(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@S" + txtBoxDI_05.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_05.Text);
+            freq = int.Parse(textBoxFreqDI_05.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CLOCK_COUNT_STOP, drive, freq);
+            SendData(bytes);
         }
 
         private void btnXHome_Click(object sender, EventArgs e)
         {
-            ExecuteMoveCommand("@@@H00");
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_00.Text);
+            freq = int.Parse(textBoxFreqDI_00.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_HOME, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnYHome_Click(object sender, EventArgs e)
         {
-            ExecuteMoveCommand("@@@H01");
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_01.Text);
+            freq = int.Parse(textBoxFreqDI_01.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_HOME, drive, freq);
+            SendData(bytes);
 
         }
 
         private void btnZHome_Click(object sender, EventArgs e)
         {
-            ExecuteMoveCommand("@@@H02");
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_02.Text);
+            freq = int.Parse(textBoxFreqDI_02.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_HOME, drive, freq);
+            SendData(bytes);
         }
 
         private void btnAHome_Click(object sender, EventArgs e)
         {
-            ExecuteMoveCommand("@@@H03");
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_03.Text);
+            freq = int.Parse(textBoxFreqDI_03.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_HOME, drive, freq);
+            SendData(bytes);
         }
 
         private void btnCHome_Click(object sender, EventArgs e)
         {
-            ExecuteMoveCommand("@@@H04");
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_04.Text);
+            freq = int.Parse(textBoxFreqDI_04.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_HOME, drive, freq);
+            SendData(bytes);
         }
 
         private void btnRefreshPortList_Click(object sender, EventArgs e)
@@ -792,20 +966,27 @@ namespace Titan_USB_CDC_Interface
 
         private void btnZFwd_MouseDown(object sender, MouseEventArgs e)
         {
-            ExecuteMoveCommand("@@@M" + txtBoxDI_02.Text + "F" + textBoxFreqDI_02.Text);
-
+            byte[] bytes = new byte[500];
+            int drive, freq;
+            ZeroByteArray(bytes);
+            drive = int.Parse(txtBoxDI_02.Text);
+            freq = int.Parse(textBoxFreqDI_02.Text);
+            btn_Mouse_Down(bytes, MOVE_TYPE_CONTINUOUS_FWD, drive, freq);
+            SendData(bytes);
         }
 
         private void ExecuteMoveCommand(string moveCommand)
         {
-            string theData;
-            theData = textBoxCommand.Text;
+//            string theData;
+//            theData = textBoxCommand.Text;
 //            SendData(moveCommand);
+/*
             listBoxReceived.Items.Add("\r\n"+moveCommand);
             if (listBoxReceived.Items.Count > 12)
             {
                 listBoxReceived.Items.RemoveAt(1);
             }
+*/
         }
     }
 }
